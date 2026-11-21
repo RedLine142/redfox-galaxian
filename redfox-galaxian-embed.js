@@ -1,29 +1,28 @@
 (() => {
 'use strict';
-const GAME_URL='https://raw.githack.com/RedLine142/redfox-galaxian/e0ee4bdf5f10f520ae63c61df305c23a04c97cf5/game.html';
+const GAME_URL='https://raw.githack.com/RedLine142/redfox-galaxian/f563da1e72823c6fc920b36fc23737ba692d71ce/galaxy-invaders.html';
 function mount(){
-  let root=document.getElementById('pp-galaxian-game');
+  let root=document.getElementById('pp-galaxy-invaders');
   if(!root){
     const host=document.querySelector('.oPos.nobr');
     if(host){
       root=document.createElement('div');
-      root.id='pp-galaxian-game';
+      root.id='pp-galaxy-invaders';
       host.appendChild(root);
     }
   }
   if(!root)return false;
-  if(root.dataset.galaxianMounted==='original-galaxian-v4')return true;
-  root.dataset.galaxianMounted='original-galaxian-v4';
-  root.innerHTML='';
-  root.style.cssText='width:100%;max-width:620px;margin:14px auto;line-height:normal;overflow:hidden;background:#000;';
+  if(root.dataset.mounted==='galaxy-invaders-v1')return true;
+  root.dataset.mounted='galaxy-invaders-v1';
+  root.style.cssText='width:100%;max-width:640px;margin:14px auto;overflow:hidden;background:#000;line-height:normal;border:2px solid #315c7c;border-radius:6px;box-sizing:border-box;aspect-ratio:4/3;';
   const frame=document.createElement('iframe');
-  frame.title='GALAXIAN — оригинальная версия';
+  frame.title='Galaxy Invaders';
   frame.setAttribute('allow','autoplay; fullscreen');
   frame.setAttribute('allowfullscreen','');
   frame.setAttribute('loading','eager');
   frame.setAttribute('scrolling','no');
   frame.setAttribute('tabindex','0');
-  frame.style.cssText='display:block;width:100%;height:380px;border:2px solid #315c7c;border-radius:6px;background:#000;box-sizing:border-box;';
+  frame.style.cssText='display:block;width:100%;height:100%;border:0;background:#000;';
   frame.src=GAME_URL;
   root.appendChild(frame);
   return true;
