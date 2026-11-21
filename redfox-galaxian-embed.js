@@ -1,6 +1,6 @@
 (() => {
 'use strict';
-const GAME_URL='https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@e0ee4bdf5f10f520ae63c61df305c23a04c97cf5/game.html';
+const GAME_URL='https://raw.githack.com/RedLine142/redfox-galaxian/e0ee4bdf5f10f520ae63c61df305c23a04c97cf5/game.html';
 function mount(){
   let root=document.getElementById('pp-galaxian-game');
   if(!root){
