@@ -1,22 +1,27 @@
 # RED FOX — GALAXIAN
 
-Standalone browser arcade game for the RED FOX quest platform.
+Встраиваемая версия оригинальной браузерной игры [Galaxian](https://github.com/zankhanarana9/Galaxian), сохранены её исходный игровой движок, спрайты, фон, аудио, волны врагов, HUD и экран Game Over.
 
-## Embed
+## Встраивание на страницу задания RED FOX
 
-Add this script to the quest page HTML:
+Внутри блока задания оставьте контейнер `.oPos.nobr` и добавьте скрипт:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@main/redfox-galaxian-embed.js"></script>
+<div class="oPos nobr">&nbsp;</div>
+<script src="https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@7389046e32c2e85993b196ace109411adb00ece8/redfox-galaxian-embed.js"></script>
 ```
 
-The loader mounts into `#pp-galaxian-game`, or creates that element inside `.oPos.nobr` when the latter exists.
+Загрузчик автоматически создаёт iframe внутри `.oPos.nobr`. Игровая страница открывается через raw.githack, чтобы HTML обрабатывался браузером как HTML, а не как обычный текст.
 
-## Controls
+## Управление
 
-- Left / Right arrows: move
-- Space: fire
-- Touch controls are included for phones
-- Fullscreen button is built in
+- Левая кнопка мыши — перемещение влево.
+- Правая кнопка мыши — перемещение вправо.
+- Пробел — стрельба.
+- Restart — перезапуск после Game Over.
 
-The game uses original procedural pixel graphics and its own JavaScript implementation. The referenced GalaxyInvaders project was used only as high-level gameplay inspiration; its source code and artwork are not bundled.
+Размер игрового поля — 600 × 360 px; на узком экране оно автоматически масштабируется.
+
+## Исходный проект и ресурсы
+
+Игровой JavaScript, изображения и звуковые файлы загружаются из исходного репозитория Galaxian с зафиксированной ревизии `33fcddb6fb6bcba26081efeb146f0f522d69ae18`.
