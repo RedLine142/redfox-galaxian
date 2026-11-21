@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<base href="https://cdn.jsdelivr.net/gh/patnaikshekhar/GalaxyInvaders@9d82210b4ca1679f492c9153657f9055ba3467fd/">
+<title>Galaxy Invaders — RED FOX</title>
+<link rel="stylesheet" href="css/main.css">
+<style>
+html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#000}
+body{position:relative;min-height:0}
+#game{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
+#game canvas{display:block;width:100%;height:100%;object-fit:contain;touch-action:none}
+.loader-wrapper{z-index:5}
+.loader{border-top-color:rgba(255,0,125,.2);border-right-color:rgba(255,0,125,.2);border-bottom-color:rgba(255,0,0,.2)}
+#load-error{display:none;position:absolute;z-index:10;inset:0;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;background:#000;color:#fff;text-align:center;font:16px/1.5 Arial,sans-serif}
+</style>
+</head>
+<body id="body">
+<div class="loader-wrapper" id="loader-wrapper"><div class="loader"></div></div>
+<div id="game"></div>
+<div id="load-error">Не удалось загрузить игру. Обновите страницу и попробуйте ещё раз.</div>
+<script>
+(function(){
+  var timer=setTimeout(function(){
+    var loader=document.getElementById('loader-wrapper');
+    var game=document.querySelector('#game canvas');
+    if(loader && loader.parentNode && !game){
+      document.getElementById('load-error').style.display='flex';
+      loader.style.display='none';
+    }
+  },15000);
+  window.addEventListener('error',function(e){
+    if(e && e.message) console.error('Galaxy Invaders:',e.message);
+  });
+  window.addEventListener('unhandledrejection',function(e){
+    console.error('Galaxy Invaders promise:',e.reason);
+  });
+})();
+</script>
+<script src="lib/requirejs/require.js" data-main="js/main.js"></script>
+</body>
+</html>
