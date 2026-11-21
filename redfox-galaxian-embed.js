@@ -17,7 +17,7 @@ function mount(){
   frame.setAttribute('allowfullscreen','');
   frame.setAttribute('loading','eager');
   frame.style.cssText='display:block;width:100%;height:clamp(440px,calc(75vw + 70px),790px);border:2px solid #315c7c;border-radius:6px;background:#02050c;';
-  frame.src='https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@main/index.html';
+  frame.src='https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@b81f3415da7ffd089493bfdddb2b69e8042e3634/index.html';
   root.appendChild(frame);
   return true;
 }
