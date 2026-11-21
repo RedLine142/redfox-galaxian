@@ -13,12 +13,21 @@ body{position:relative;min-height:0}
 #game canvas{display:block;width:100%;height:100%;object-fit:contain;touch-action:none}
 .loader-wrapper{z-index:5}
 .loader{border-top-color:rgba(255,0,125,.2);border-right-color:rgba(255,0,125,.2);border-bottom-color:rgba(255,0,0,.2)}
+#touch-controls{display:none;position:absolute;z-index:8;left:0;right:0;bottom:12px;justify-content:space-between;align-items:center;padding:0 16px;pointer-events:none}
+#touch-controls button{pointer-events:auto;width:64px;height:54px;border:1px solid rgba(255,255,255,.35);border-radius:10px;background:rgba(15,28,50,.68);color:#fff;font:bold 18px Arial;touch-action:none}
+#touch-controls button[data-key="32"]{width:92px;color:#2ecc71;font-size:14px}
+@media(max-width:700px){#touch-controls{display:flex}}
 #load-error{display:none;position:absolute;z-index:10;inset:0;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;background:#000;color:#fff;text-align:center;font:16px/1.5 Arial,sans-serif}
 </style>
 </head>
 <body id="body">
 <div class="loader-wrapper" id="loader-wrapper"><div class="loader"></div></div>
 <div id="game"></div>
+<div id="touch-controls" aria-label="Игровое управление">
+<button type="button" data-key="37" aria-label="Влево">◀</button>
+<button type="button" data-key="32" aria-label="Огонь">FIRE</button>
+<button type="button" data-key="39" aria-label="Вправо">▶</button>
+</div>
 <div id="load-error">Не удалось загрузить игру. Обновите страницу и попробуйте ещё раз.</div>
 <script>
 (function(){
@@ -38,6 +47,64 @@ body{position:relative;min-height:0}
   });
 })();
 </script>
-<script src="lib/requirejs/require.js" data-main="js/main.js"></script>
+<script src="lib/requirejs/require.js"></script>
+<script>
+(function(){
+  var BASE='https://cdn.jsdelivr.net/gh/patnaikshekhar/GalaxyInvaders@9d82210b4ca1679f492c9153657f9055ba3467fd/';
+  requirejs.config({baseUrl:BASE+'js'});
+  requirejs(['../lib/gameEngine/game','constants','Scenes/menuScene','Scenes/gameScene'],function(Game,Constants,menuScene,gameScene){
+    var game=new Game('game',Constants.WINDOW_WIDTH,Constants.WINDOW_HEIGHT,Constants.FPS,1.5);
+    window.galaxyInvadersGame=game;
+    game.fullScreen=function(){};
+    game.addScene('menu',menuScene);
+    game.addScene('game',gameScene);
+    var loader=document.getElementById('loader-wrapper');
+    var started=false;
+    function loadImages(){
+      if(started)return;
+      started=true;
+      game.imageManager.preLoad(Constants.ALL_IMAGES,function(){
+        if(loader&&loader.parentNode)loader.parentNode.removeChild(loader);
+        game.startScene('menu');
+      });
+    }
+    var audioFallback=setTimeout(loadImages,5000);
+    try{
+      game.soundManager.preLoad(Constants.ALL_SOUNDS,function(){
+        clearTimeout(audioFallback);
+        loadImages();
+      });
+    }catch(e){
+      clearTimeout(audioFallback);
+      loadImages();
+    }
+    var controls=document.getElementById('touch-controls');
+    if(controls){
+      controls.addEventListener('pointerdown',function(e){
+        var button=e.target.closest('[data-key]');
+        if(!button)return;
+        e.preventDefault();
+        var key=Number(button.getAttribute('data-key'));
+        var fire=function(){document.dispatchEvent(new KeyboardEvent('keydown',{keyCode:key,which:key,bubbles:true}));};
+        fire();
+        if(key===32){button._repeat=setInterval(fire,150);}
+        button.setPointerCapture(e.pointerId);
+      });
+      ['pointerup','pointercancel','lostpointercapture'].forEach(function(type){
+        controls.addEventListener(type,function(e){
+          var button=e.target.closest('[data-key]');
+          if(button&&button._repeat){clearInterval(button._repeat);button._repeat=null;}
+        });
+      });
+    }
+  },function(error){
+    console.error('Galaxy Invaders load error:',error);
+    var message=document.getElementById('load-error');
+    if(message)message.style.display='flex';
+    var loader=document.getElementById('loader-wrapper');
+    if(loader)loader.style.display='none';
+  });
+})();
+</script>
 </body>
 </html>
