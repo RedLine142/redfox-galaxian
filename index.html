@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>RED FOX ARCADE — GALAXIAN</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#050914;color:#eaf5ff;font-family:Arial,sans-serif}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center}
+#top{height:38px;min-height:38px;width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:#091426;border-bottom:1px solid #24476a;font:700 11px monospace;letter-spacing:1px;color:#a8d8ff}
+#top strong{color:#fff}#top .right{display:flex;align-items:center;gap:12px}
+#fs{border:1px solid #47749a;border-radius:4px;background:#102b45;color:#dff4ff;padding:6px 9px;font:bold 10px Arial;cursor:pointer;touch-action:manipulation}
+#stage{position:relative;flex:1;min-height:0;width:100%;display:flex;align-items:center;justify-content:center;background:#02050c;overflow:hidden}
+canvas{display:block;width:min(100%,calc((100dvh - 112px)*1.333333));height:auto;max-height:100%;aspect-ratio:4/3;object-fit:contain;image-rendering:pixelated;background:#02050c}
+#overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;background:#02050cdd;z-index:2;padding:20px}
+#overlay h1{margin:0;color:#7cecff;font:900 clamp(28px,6vw,54px)/1 monospace;letter-spacing:4px;text-shadow:0 0 12px #168cff,4px 4px #15304f}
+#overlay .sub{color:#f7d66b;font:bold 13px monospace;letter-spacing:3px}
+#overlay p{max-width:440px;margin:4px 0;color:#b8cde1;font:12px/1.7 monospace}
+#overlay button{border:1px solid #8bdfff;background:#123a5a;color:#fff;padding:13px 25px;font:bold 14px monospace;letter-spacing:2px;cursor:pointer;box-shadow:0 0 16px #147dbb66}
+#overlay button:active{transform:translateY(2px)}
+#controls{height:74px;min-height:74px;width:100%;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#091426;border-top:1px solid #24476a}
+.pad,.actions{display:flex;align-items:center;gap:10px}
+#controls button{width:58px;height:54px;border:1px solid #47749a;border-radius:8px;background:linear-gradient(#173c5c,#0c2036);color:#eaf7ff;font-size:22px;font-weight:bold;touch-action:none;user-select:none;-webkit-user-select:none;box-shadow:0 3px 0 #030a12}
+#controls button.fire{width:94px;background:linear-gradient(#9d3c32,#5c1d22);border-color:#e48b73;font-size:13px;letter-spacing:1px}
+#hint{margin:auto;color:#7898b5;font:10px/1.5 monospace;text-align:center}
+@media(max-width:600px){#top{height:36px;min-height:36px;font-size:9px;padding:0 7px}#fs{font-size:9px;padding:5px 6px}#controls{height:88px;min-height:88px;padding:8px 10px}.pad,.actions{gap:8px}#controls button{width:58px;height:58px;font-size:23px}#controls button.fire{width:82px;font-size:12px}#hint{display:none}canvas{width:min(100%,calc((100dvh - 124px)*1.333333))}}
+html:fullscreen,html:fullscreen body{width:100%;height:100%;background:#02050c}html:fullscreen #stage{flex:1}html:fullscreen canvas{max-height:calc(100dvh - 112px)}html:fullscreen #controls{height:74px;min-height:74px}
+</style>
+</head>
+<body>
+<header id="top"><span>RED FOX ARCADE</span><strong>GALAXIAN</strong><div class="right"><span id="hud">SCORE 000000 · LIVES 3</span><button id="fs" type="button">⛶ НА ВЕСЬ ЭКРАН</button></div></header>
+<main id="stage"><canvas id="game" width="640" height="480" aria-label="Игра Galaxian"></canvas><section id="overlay"><div class="sub">RED FOX PRESENTS</div><h1>GALAXIAN</h1><p>Отбивай атаки инопланетного флота. Уничтожай строй, уворачивайся от пикирующих кораблей и не теряй свои жизни.</p><p>← → ДВИЖЕНИЕ<br>ПРОБЕЛ / FIRE — СТРЕЛЬБА</p><button id="start">НАЧАТЬ ИГРУ</button></section></main>
+<footer id="controls"><div class="pad"><button data-key="ArrowLeft" aria-label="Влево">◀</button><button data-key="ArrowRight" aria-label="Вправо">▶</button></div><div id="hint">← → ДВИЖЕНИЕ<br>SPACE — ОГОНЬ</div><div class="actions"><button class="fire" data-key="Space">ОГОНЬ</button></div></footer>
+<script>
+(function(){
+'use strict';
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),hud=document.getElementById('hud'),overlay=document.getElementById('overlay'),startBtn=document.getElementById('start');
+const W=640,H=480,keys=Object.create(null);
+let state='menu',score=0,lives=3,stage=1,ship,shots,enemies,enemyShots,particles,stars,last=0,fireTimer=0,spawnTimer=0,formationDir=1,formationX=0,formationY=0,invuln=0,highScore=0;
+try{highScore=+(localStorage.getItem('rfGalaxianBest')||0)}catch(e){}
+const colors=['#ff5b67','#ffb84e','#55e6a5','#5ab8ff'];
+function keyName(e){return e.code||e.key}
+function keyDown(e){const k=keyName(e);if(['ArrowLeft','ArrowRight','Space'].includes(k)){keys[k]=true;e.preventDefault()}if(state==='menu'&&k==='Space')startGame()}
+function keyUp(e){keys[keyName(e)]=false}
+document.addEventListener('keydown',keyDown);document.addEventListener('keyup',keyUp);window.addEventListener('blur',()=>{Object.keys(keys).forEach(k=>keys[k]=false)});
+document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;const set=(v,e)=>{if(e)e.preventDefault();keys[k]=v};b.addEventListener('pointerdown',e=>{b.setPointerCapture&&b.setPointerCapture(e.pointerId);set(true,e)});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,e=>set(false,e)));b.addEventListener('contextmenu',e=>e.preventDefault())});
+function rand(a,b){return a+Math.random()*(b-a)}
+function makeStars(){stars=Array.from({length:100},()=>({x:rand(0,W),y:rand(0,H),s:rand(.5,1.8),v:rand(12,48),a:rand(.25,.9)}))}
+function makeShip(){return{x:W/2-15,y:H-54,w:30,h:24,speed:260}}
+function formation(){enemies=[];const rows=4,cols=9;for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)enemies.push({x:118+c*51,y:70+r*39,baseX:118+c*51,baseY:70+r*39,w:27,h:23,row:r,col:c,phase:rand(0,6.28),dive:false,dx:0,dy:0,fire:rand(2,7),alive:true})}
+function startGame(){score=0;lives=3;stage=1;ship=makeShip();shots=[];enemyShots=[];particles=[];formationX=0;formationY=0;formationDir=1;invuln=1.5;fireTimer=0;makeStars();formation();state='playing';overlay.style.display='none';updateHud()}
+startBtn.addEventListener('click',startGame);
+function updateHud(){hud.textContent='SCORE '+String(score).padStart(6,'0')+' · LIVES '+lives+' · WAVE '+stage}
+function addExplosion(x,y,color){for(let i=0;i<13;i++){const a=rand(0,Math.PI*2),v=rand(35,145);particles.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:rand(.22,.55),max:.55,color})}}
+function shipHit(){if(invuln>0||state!=='playing')return;addExplosion(ship.x+15,ship.y+12,'#7cecff');lives--;invuln=1.8;ship=makeShip();updateHud();if(lives<=0){state='over';showEnd('GAME OVER','ТВОЙ СЧЁТ: '+score,'ИГРАТЬ СНОВА')}}
+function showEnd(title,desc,button){overlay.innerHTML='<div class="sub">RED FOX ARCADE</div><h1>'+title+'</h1><p>'+desc+'</p><p>РЕКОРД: '+highScore+'</p><button id="again">'+button+'</button>';overlay.style.display='flex';document.getElementById('again').addEventListener('click',startGame)}
+function drawShip(x,y){ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.fillStyle='#dffaff';ctx.fillRect(13,0,4,4);ctx.fillStyle='#56d9ff';ctx.fillRect(11,4,8,5);ctx.fillRect(7,9,16,5);ctx.fillStyle='#1689d0';ctx.fillRect(2,14,26,6);ctx.fillStyle='#e5f9ff';ctx.fillRect(0,18,30,4);ctx.fillStyle='#ffdf67';ctx.fillRect(12,20,6,4);ctx.restore()}
+const patterns=[
+['00100100','00011000','00111100','01111110','11011011','10100101','00100100'],
+['00111100','01111110','11111111','11011011','11111111','00100100','01000010'],
+['00011000','00111100','01111110','11011011','11111111','00100100','01011010'],
+['00100100','01111110','11111111','11011011','01111110','00100100','01000010']
+];
+function drawEnemy(e,t){const col=colors[e.row],pat=patterns[e.row];ctx.save();ctx.translate(Math.round(e.x),Math.round(e.y));ctx.fillStyle=col;const px=3.3,py=3;for(let y=0;y<pat.length;y++)for(let x=0;x<pat[y].length;x++)if(pat[y][x]==='1')ctx.fillRect(Math.round(x*px),Math.round(y*py),Math.ceil(px),py);ctx.fillStyle='#fff';ctx.fillRect(7,8,3,3);ctx.fillRect(17,8,3,3);ctx.restore()}
+function drawBackground(dt){ctx.fillStyle='#02050c';ctx.fillRect(0,0,W,H);for(const s of stars){s.y+=s.v*dt;if(s.y>H){s.y=0;s.x=rand(0,W)}ctx.globalAlpha=s.a;ctx.fillStyle='#b8ddff';ctx.fillRect(s.x,s.y,s.s,s.s)}ctx.globalAlpha=1}
+function draw(){drawBackground(0);if(state==='menu'){drawShip(ship?ship.x:W/2-15,H-54);return}if(state==='playing'||state==='over'){for(const e of enemies)if(e.alive)drawEnemy(e,0);ctx.fillStyle='#ffe36a';for(const b of shots)ctx.fillRect(b.x,b.y,3,11);ctx.fillStyle='#ff6577';for(const b of enemyShots){ctx.fillRect(b.x,b.y,4,10);ctx.fillRect(b.x-2,b.y+3,8,3)}if(ship&&(invuln<=0||Math.floor(performance.now()/100)%2===0))drawShip(ship.x,ship.y);for(const p of particles){ctx.globalAlpha=Math.max(0,p.life/p.max);ctx.fillStyle=p.color;ctx.fillRect(p.x,p.y,3,3)}ctx.globalAlpha=1;ctx.fillStyle='#193c58';ctx.fillRect(0,H-19,W,1);ctx.fillStyle='#52738d';ctx.font='10px monospace';ctx.fillText('RED FOX • GALAXIAN DEFENSE',12,H-7)}}
+function rectHit(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y}
+function update(dt){if(state!=='playing')return;for(const s of stars){s.y+=s.v*dt;if(s.y>H){s.y=0;s.x=rand(0,W)}}if(invuln>0)invuln-=dt;
+if(keys.ArrowLeft)ship.x-=ship.speed*dt;if(keys.ArrowRight)ship.x+=ship.speed*dt;ship.x=Math.max(8,Math.min(W-ship.w-8,ship.x));
+fireTimer-=dt;if(keys.Space&&fireTimer<=0){shots.push({x:ship.x+13,y:ship.y-7,w:3,h:11});fireTimer=.23}
+for(let i=shots.length-1;i>=0;i--){shots[i].y-=440*dt;if(shots[i].y<-15)shots.splice(i,1)}
+formationX+=formationDir*(24+stage*2)*dt;if(formationX>45)formationDir=-1;if(formationX< -45)formationDir=1;
+spawnTimer-=dt;
+for(const e of enemies){if(!e.alive)continue;e.phase+=dt*2.2;if(!e.dive){e.x=e.baseX+formationX+Math.sin(e.phase)*2;e.y=e.baseY+formationY+Math.sin(e.phase*.7)*2;e.fire-=dt;if(e.fire<=0&&Math.random()<.22){enemyShots.push({x:e.x+12,y:e.y+e.h,w:4,h:10,v:170+stage*8});e.fire=rand(4,9)}if(spawnTimer<=0&&e.row>=1&&Math.random()<.0018*stage){e.dive=true;e.dx=(ship.x-e.x)*.55+rand(-90,90);e.dy=0;spawnTimer=rand(.15,.55)}}else{e.dy+=110*dt;e.x+=Math.sin(e.phase*2)*90*dt+e.dx*.15*dt;e.y+=(150+stage*8)*dt;if(e.y>H+20){e.dive=false;e.baseX=e.x-formationX;e.baseY=rand(58,190);e.fire=rand(3,7)}}}
+for(let i=enemyShots.length-1;i>=0;i--){const b=enemyShots[i];b.y+=b.v*dt;if(b.y>H){enemyShots.splice(i,1);continue}if(invuln<=0&&rectHit(b,ship)){enemyShots.splice(i,1);shipHit()}}
+for(let i=shots.length-1;i>=0;i--){let hit=false;for(const e of enemies){if(!e.alive)continue;if(rectHit(shots[i],e)){e.alive=false;addExplosion(e.x+13,e.y+11,colors[e.row]);score+=([80,60,50,40][e.row]||40);try{if(score>highScore){highScore=score;localStorage.setItem('rfGalaxianBest',highScore)}}catch(err){}updateHud();shots.splice(i,1);hit=true;break}}if(hit)continue}
+for(let i=particles.length-1;i>=0;i--){const p=particles[i];p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=65*dt;p.life-=dt;if(p.life<=0)particles.splice(i,1)}
+if(enemies.every(e=>!e.alive)){stage++;formationX=0;formationY=0;formationDir=1;formation();enemyShots=[];invuln=2;updateHud()}
+}
+function frame(now){const dt=Math.min(.033,(now-last)/1000||0);last=now;update(dt);draw();requestAnimationFrame(frame)}
+makeStars();ship=makeShip();requestAnimationFrame(frame);
+document.getElementById('fs').addEventListener('click',async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else if(document.documentElement.requestFullscreen){await document.documentElement.requestFullscreen()}else{document.getElementById('fs').textContent='НЕДОСТУПНО'}}catch(e){document.getElementById('fs').textContent='НЕДОСТУПНО'}});
+document.addEventListener('fullscreenchange',()=>{document.getElementById('fs').textContent=document.fullscreenElement?'⤢ ВЫЙТИ':'⛶ НА ВЕСЬ ЭКРАН'});
+})();
+</script>
+</body>
+</html>
