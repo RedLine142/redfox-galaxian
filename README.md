@@ -8,7 +8,7 @@
 
 ```html
 <div class="oPos nobr">&nbsp;</div>
-<script src="https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@46c773ad41960cb8d1a1a604aa522e9016c0b5e3/redfox-galaxian-embed.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@7334f6bea2554317d20d9d8be14069b601301a20/redfox-galaxian-embed.js"></script>
 ```
 
 ## Управление
@@ -23,4 +23,4 @@
 
 Проверена загрузка RequireJS, игрового движка, игровых модулей, спрайт-листа и всех четырёх OGG-файлов в браузере. Canvas создаётся, загрузчик скрывается, ошибок загрузки в проверенном сеансе не зафиксировано.
 
-Открыть страницу игры: https://raw.githack.com/RedLine142/redfox-galaxian/a1cf1efa62da52ffc5b2d6210c84c95521439e63/galaxy-invaders.html
+Открыть страницу игры: https://raw.githack.com/RedLine142/redfox-galaxian/fbacacec2be724c7e83e78527518e1f38b3fab38/galaxy-invaders.html
