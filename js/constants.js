@@ -26,7 +26,7 @@ define([
   // Controls Text
   Constants.CONTROLS_TEXT_X = 50;
   Constants.CONTROLS_TEXT_Y = 280;
-  Constants.CONTROLS_TEXT_TEXT = '← / → — УДЕРЖИВАТЬ   МЫШЬ — ДВИЖЕНИЕ';
+  Constants.CONTROLS_TEXT_TEXT = '← / → — УДЕРЖИВАТЬ | МЫШЬ — ДВИЖЕНИЕ | ПРОБЕЛ — ОГОНЬ';
   Constants.CONTROLS_TEXT_COLOR = '#16a085';
   Constants.CONTROLS_TEXT_FONT = '14px Georgia';
 
