@@ -10,7 +10,7 @@
 html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;background:#000}
 body{position:relative;min-height:0}
 #game{position:absolute;inset:0;width:100%;height:100%;overflow:hidden}
-#game canvas{display:block;width:100%;height:100%;object-fit:contain;touch-action:none}
+#game canvas{display:block;width:100%;height:100%;object-fit:contain;touch-action:none;cursor:crosshair}
 .loader-wrapper{z-index:5}
 .loader{border-top-color:rgba(255,0,125,.2);border-right-color:rgba(255,0,125,.2);border-bottom-color:rgba(255,0,0,.2)}
 #touch-controls{display:none;position:absolute;z-index:8;left:0;right:0;bottom:12px;justify-content:space-between;align-items:center;padding:0 16px;pointer-events:none}
@@ -31,10 +31,23 @@ body{position:relative;min-height:0}
 <div id="load-error">Не удалось загрузить игру. Обновите страницу и попробуйте ещё раз.</div>
 <script>
 (function(){
+  window.__heldKeys = Object.create(null);
   document.addEventListener('keydown',function(e){
     var key=e.keyCode||e.which;
-    if(key===32||key===37||key===39)e.preventDefault();
+    if(key===32||key===37||key===39){
+      e.preventDefault();
+      window.__heldKeys[key]=true;
+    }
   },{passive:false});
+  document.addEventListener('keyup',function(e){
+    var key=e.keyCode||e.which;
+    if(key===32||key===37||key===39)window.__heldKeys[key]=false;
+  });
+  window.addEventListener('blur',function(){
+    window.__heldKeys[37]=false;
+    window.__heldKeys[39]=false;
+    window.__heldKeys[32]=false;
+  });
   var timer=setTimeout(function(){
     var loader=document.getElementById('loader-wrapper');
     var game=document.querySelector('#game canvas');
@@ -56,20 +69,26 @@ body{position:relative;min-height:0}
 (function(){
   var controls=document.getElementById('touch-controls');
   if(!controls)return;
+  function send(key,type){
+    document.dispatchEvent(new KeyboardEvent(type,{keyCode:key,which:key,bubbles:true}));
+  }
   controls.addEventListener('pointerdown',function(e){
     var button=e.target.closest('[data-key]');
     if(!button)return;
     e.preventDefault();
     var key=Number(button.getAttribute('data-key'));
-    var fire=function(){document.dispatchEvent(new KeyboardEvent('keydown',{keyCode:key,which:key,bubbles:true}));};
-    fire();
-    button._repeat=setInterval(fire,key===32?170:85);
-    button.setPointerCapture(e.pointerId);
+    button._key=key;
+    send(key,'keydown');
+    if(key===32)button._repeat=setInterval(function(){send(32,'keydown');},170);
+    try{button.setPointerCapture(e.pointerId);}catch(err){}
   });
   ['pointerup','pointercancel','lostpointercapture'].forEach(function(type){
     controls.addEventListener(type,function(e){
       var button=e.target.closest('[data-key]');
-      if(button&&button._repeat){clearInterval(button._repeat);button._repeat=null;}
+      if(!button||button._key===undefined)return;
+      if(button._repeat){clearInterval(button._repeat);button._repeat=null;}
+      send(button._key,'keyup');
+      button._key=undefined;
     });
   });
 })();
