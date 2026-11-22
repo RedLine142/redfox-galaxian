@@ -16,6 +16,7 @@ define(['../constants',
     this.level = 1;
     this.lives = 2;
     this.finalScreen = false;
+    this.gameOver = false;
     this.levelClearing = false;
     this.respawnTimer = 0;
     this.bindMouseControl();
@@ -106,7 +107,7 @@ define(['../constants',
       }
     });
 
-    if (this.noOfEnemies <= 0 && !this.levelClearing) this.beginLevelClear();
+    if (this.noOfEnemies <= 0 && !this.levelClearing && this.lives > 0 && !this.gameOver) this.beginLevelClear();
   };
 
   gameScene.createEnemyWave = function() {
@@ -162,6 +163,7 @@ define(['../constants',
       return;
     }
 
+    this.gameOver = true;
     var gameOver = new StaticText(175, 220, 'ИГРА ОКОНЧЕНА', '#ecf0f1', '34px Georgia');
     var restart = new StaticText(145, 270, 'ПРОБЕЛ — НАЧАТЬ ЗАНОВО', '#2ecc71', '20px Georgia');
     restart.keyDown = function(key) {
@@ -200,6 +202,7 @@ define(['../constants',
     this.lives = 2;
     this.level = 1;
     this.finalScreen = false;
+    this.gameOver = false;
     this.levelClearing = false;
     this.respawnTimer = 0;
     this.startLevel(1);
