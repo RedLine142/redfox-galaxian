@@ -159,7 +159,7 @@ define(['../constants',
     this.updateHud();
 
     if (this.lives > 0) {
-      this.respawnTimer = 1200;
+      this.respawnTimer = 8400;
       return;
     }
 
@@ -175,9 +175,14 @@ define(['../constants',
 
   gameScene.beginLevelClear = function() {
     this.levelClearing = true;
-    this.clearTimer = 1900;
-    var words = ['м', 'над', 'небо'];
-    this.addObject(new StaticText(285, 235, words[this.level - 1],
+    this.clearTimer = 14000;
+    var words = [
+      {text: 'м', x: 303},
+      {text: 'над', x: 263},
+      {text: 'небо', x: 245}
+    ];
+    var word = words[this.level - 1];
+    this.addObject(new StaticText(word.x, 235, word.text,
       '#2ecc71', '54px Georgia'));
   };
 
