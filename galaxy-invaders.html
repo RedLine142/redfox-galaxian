@@ -31,6 +31,10 @@ body{position:relative;min-height:0}
 <div id="load-error">Не удалось загрузить игру. Обновите страницу и попробуйте ещё раз.</div>
 <script>
 (function(){
+  document.addEventListener('keydown',function(e){
+    var key=e.keyCode||e.which;
+    if(key===32||key===37||key===39)e.preventDefault();
+  },{passive:false});
   var timer=setTimeout(function(){
     var loader=document.getElementById('loader-wrapper');
     var game=document.querySelector('#game canvas');
@@ -47,7 +51,7 @@ body{position:relative;min-height:0}
   });
 })();
 </script>
-<script src="https://cdn.jsdelivr.net/gh/patnaikshekhar/GalaxyInvaders@9d82210b4ca1679f492c9153657f9055ba3467fd/lib/requirejs/require.js" data-main="https://cdn.jsdelivr.net/gh/patnaikshekhar/GalaxyInvaders@9d82210b4ca1679f492c9153657f9055ba3467fd/js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/patnaikshekhar/GalaxyInvaders@9d82210b4ca1679f492c9153657f9055ba3467fd/lib/requirejs/require.js" data-main="https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@7bd4da37a3f17d2904cb25088c4adc28c51847c8/js/main.js"></script>
 <script>
 (function(){
   var controls=document.getElementById('touch-controls');
@@ -59,7 +63,7 @@ body{position:relative;min-height:0}
     var key=Number(button.getAttribute('data-key'));
     var fire=function(){document.dispatchEvent(new KeyboardEvent('keydown',{keyCode:key,which:key,bubbles:true}));};
     fire();
-    if(key===32)button._repeat=setInterval(fire,150);
+    button._repeat=setInterval(fire,key===32?170:85);
     button.setPointerCapture(e.pointerId);
   });
   ['pointerup','pointercancel','lostpointercapture'].forEach(function(type){
