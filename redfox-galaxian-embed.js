@@ -1,6 +1,6 @@
 (() => {
 'use strict';
-const GAME_URL='https://raw.githack.com/RedLine142/redfox-galaxian/fc16aad79cc868aca352927e79f9cb12fd17f94c/galaxy-invaders.html';
+const GAME_URL='https://raw.githack.com/RedLine142/redfox-galaxian/3b4170cc17e89bacd404279cd8d50b78a64c4977/galaxy-invaders.html';
 function mount(){
   let root=document.getElementById('pp-galaxy-invaders');
   if(!root){
