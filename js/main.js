@@ -1,5 +1,5 @@
 (function() {
-  var localRoot = 'https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@main/js/';
+  var localRoot = 'https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@f5a543d597715b93a45122b04df7ed51fb48194b/js/';
   var sourceRoot = 'https://cdn.jsdelivr.net/gh/patnaikshekhar/GalaxyInvaders@9d82210b4ca1679f492c9153657f9055ba3467fd/js/';
   requirejs.config({
     baseUrl: sourceRoot,
@@ -20,6 +20,7 @@
   require(dependencies, function(Game, Constants, menuScene, gameScene) {
     var game = new Game('game', Constants.WINDOW_WIDTH,
       Constants.WINDOW_HEIGHT, Constants.FPS, 7);
+    window.__redfoxGame = game;
     game.addScene('menu', menuScene);
     game.addScene('game', gameScene);
     var loader = document.getElementById('loader-wrapper');
