@@ -1,5 +1,5 @@
 (function() {
-  var root = 'https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@main/js/';
+  var root = 'https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@3372defd343c09991bbb885781463af5c2fc9b5/js/';
   requirejs.config({
     urlArgs: 'v=' + Date.now(),
     paths: {
