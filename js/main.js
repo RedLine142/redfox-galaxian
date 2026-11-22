@@ -7,7 +7,8 @@
     paths: {
       constants: localRoot + 'constants',
       'Entities/playerShip': localRoot + 'Entities/playerShip',
-      'Entities/enemy1': localRoot + 'Entities/enemy1'
+      'Entities/enemy1': localRoot + 'Entities/enemy1',
+      'Scenes/gameScene': localRoot + 'Scenes/gameScene'
     }
   });
   var dependencies = [
