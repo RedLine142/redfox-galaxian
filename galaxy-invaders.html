@@ -15,7 +15,7 @@ body{position:relative;min-height:0}
 .loader{border-top-color:rgba(255,0,125,.2);border-right-color:rgba(255,0,125,.2);border-bottom-color:rgba(255,0,0,.2)}
 #touch-controls{display:none;position:absolute;z-index:8;left:0;right:0;bottom:12px;justify-content:space-between;align-items:center;padding:0 16px;pointer-events:none}
 #touch-controls button{pointer-events:auto;width:64px;height:54px;border:1px solid rgba(255,255,255,.35);border-radius:10px;background:rgba(15,28,50,.68);color:#fff;font:bold 18px Arial;touch-action:none}
-#touch-controls button[data-key="32"]{width:92px;color:#2ecc71;font-size:14px}
+#touch-controls button[data-key="32"]{width:112px;color:#2ecc71;font-size:12px}
 @media(hover:none) and (pointer:coarse){#touch-controls{display:flex}}
 #load-error{display:none;position:absolute;z-index:10;inset:0;align-items:center;justify-content:center;padding:24px;box-sizing:border-box;background:#000;color:#fff;text-align:center;font:16px/1.5 Arial,sans-serif}
 </style>
@@ -25,7 +25,7 @@ body{position:relative;min-height:0}
 <div id="game"></div>
 <div id="touch-controls" aria-label="Игровое управление">
 <button type="button" data-key="37" aria-label="Влево">◀</button>
-<button type="button" data-key="32" aria-label="Огонь">FIRE</button>
+<button type="button" data-key="32" aria-label="Огонь">СТАРТ / ОГОНЬ</button>
 <button type="button" data-key="39" aria-label="Вправо">▶</button>
 </div>
 <div id="load-error">Не удалось загрузить игру. Обновите страницу и попробуйте ещё раз.</div>
