@@ -1,11 +1,13 @@
 (function() {
-  var root = 'https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@3372defd343c09991bbb885781463af5c2fc9b5/js/';
+  var localRoot = 'https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@3372defd343c09991bbb885781463af5c2fc9b5/js/';
+  var sourceRoot = 'https://cdn.jsdelivr.net/gh/patnaikshekhar/GalaxyInvaders@9d82210b4ca1679f492c9153657f9055ba3467fd/js/';
   requirejs.config({
+    baseUrl: sourceRoot,
     urlArgs: 'v=' + Date.now(),
     paths: {
-      constants: root + 'constants',
-      'Entities/playerShip': root + 'Entities/playerShip',
-      'Entities/enemy1': root + 'Entities/enemy1'
+      constants: localRoot + 'constants',
+      'Entities/playerShip': localRoot + 'Entities/playerShip',
+      'Entities/enemy1': localRoot + 'Entities/enemy1'
     }
   });
   var dependencies = [
