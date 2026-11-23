@@ -1,5 +1,5 @@
 (function() {
-  var localRoot = 'https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@5629fa09fd8e95bfadf6e00dfe194bcd1917feb6/js/';
+  var localRoot = 'https://cdn.jsdelivr.net/gh/RedLine142/redfox-galaxian@2d54ab745bcbc856919415bee7330926ffee1a41/js/';
   var sourceRoot = 'https://cdn.jsdelivr.net/gh/patnaikshekhar/GalaxyInvaders@9d82210b4ca1679f492c9153657f9055ba3467fd/js/';
   requirejs.config({
     baseUrl: sourceRoot,
