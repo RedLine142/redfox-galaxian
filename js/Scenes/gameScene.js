@@ -177,7 +177,7 @@ define(['../constants',
     this.levelClearing = true;
     this.clearTimer = 14000;
     var words = [
-      {text: 'м', x: 303},
+      {text: 'метр', x: 252},
       {text: 'над', x: 263},
       {text: 'небо', x: 245}
     ];
